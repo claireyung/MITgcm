@@ -1,3 +1,8 @@
 format: yamanifest
 version: 1.0
---- {}
+---
+work/mitgcmuv:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/run2/mitgcmuv
+  hashes:
+    binhash: dcb5d4f3052a50125dabda288139e3cd
+    md5: 473eb9407492494d9a0b6d30142cf26d

@@ -11,10 +11,9 @@ collate_mem: 2GB
 restart_history: 10
 model: mitgcm
 shortpath: /scratch/x77/cy8964/gadi_short/
-exe: mitgcmuv
+exe: /home/156/cy8964/MITgcm/verification/ocean1/run2/mitgcmuv
 #qsub_flags: -W umask=027 
 
-# exe: mitgcmuv_880x520_8constit_128cpu
 input: /home/156/cy8964/MITgcm/verification/ocean1/input/
 
 runlog: true
