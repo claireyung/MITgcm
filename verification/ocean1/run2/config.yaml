@@ -2,11 +2,11 @@ queue: normal
 # qsub_flags: -lother=hyperthread
 project: x77
 walltime: 1:00:00
-ncpus: 16
+ncpus: 20
 mem: 32GB
 jobname: mitgcmice2
-collate_walltime: 10:00:00
-collate_mem: 2GB
+#collate_walltime: 10:00:00
+#collate_mem: 2GB
 # postscript: /home/157/ixr157/scripts/jobs/run_extract
 restart_history: 10
 model: mitgcm
