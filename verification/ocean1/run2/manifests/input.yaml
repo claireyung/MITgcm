@@ -1,0 +1,113 @@
+format: yamanifest
+version: 1.0
+---
+work/.svn/all-wcprops:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/.svn/all-wcprops
+  hashes:
+    binhash: fe29211d532c5b2eb50c0b0a8b98e0de
+    md5: 26cb29c087e4432161f22eba6b060933
+work/.svn/entries:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/.svn/entries
+  hashes:
+    binhash: a6b487542651a12c22ed4a6fe65059b7
+    md5: ae1da0ed2c36eb114c91689aadaa797f
+work/.svn/text-base/data.diagnostics.svn-base:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/.svn/text-base/data.diagnostics.svn-base
+  hashes:
+    binhash: ce72babbd9a344fb0c175928797b9672
+    md5: 262b7bf0b8e30555ed55a6a9fa4e8bbc
+work/.svn/text-base/data.obcs.svn-base:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/.svn/text-base/data.obcs.svn-base
+  hashes:
+    binhash: db0a0dac34db54f1892afa84bbb8cb0e
+    md5: 05d8a8564b9bbf1890b5aaa320543845
+work/.svn/text-base/data.pkg.svn-base:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/.svn/text-base/data.pkg.svn-base
+  hashes:
+    binhash: d999f8ffa48ff3e5b95c8de092570967
+    md5: 3723303978a1f8f1a7135455fbe4b81f
+work/.svn/text-base/data.shelfice.svn-base:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/.svn/text-base/data.shelfice.svn-base
+  hashes:
+    binhash: 7f972607171c66f109395a79aa8a0d04
+    md5: 285e32f78061b62bf40e04866fc20f95
+work/.svn/text-base/data.svn-base:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/.svn/text-base/data.svn-base
+  hashes:
+    binhash: e826b9418d15f9cb64648b1dbd51153c
+    md5: b15640d37aef87011cb9348dcc697b93
+work/.svn/text-base/eedata.svn-base:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/.svn/text-base/eedata.svn-base
+  hashes:
+    binhash: 6e5c7f5c5d51dd894a425742a2f7c0cc
+    md5: b868dbecd1b29290ec5a1a9507e69b1c
+work/Etan.bin:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/Etan.bin
+  hashes:
+    binhash: a6a373b3ddcd387283606f8c320a1c3a
+    md5: f550fbcea828f54571b224c108e3cb0b
+work/MISOMIP.queue:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/MISOMIP.queue
+  hashes:
+    binhash: f39f94fa7c8917e7403e7b029ac62d37
+    md5: 4f4f3457f88198eacdc93cf1b4b25286
+work/OBs.bin:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/OBs.bin
+  hashes:
+    binhash: c78ebb6f4b4675b280bf3978153f897e
+    md5: 006e6e6b322c4456de68edb8d349e7a7
+work/OBt.bin:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/OBt.bin
+  hashes:
+    binhash: 17808575e1dadc592896f0385a718e63
+    md5: db60308f3f580483b426591638a68626
+work/OBu.bin:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/OBu.bin
+  hashes:
+    binhash: a2cfb2eb877d225950d9324e7fda5c49
+    md5: cdf9e6ff381620f1ab76ee834ad873ef
+work/Salt.bin:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/Salt.bin
+  hashes:
+    binhash: 60b2884cea7a7f7e2a3ea71bb6648f4e
+    md5: 5c31c537d497a6e076526a0507da6ffc
+work/Theta.bin:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/Theta.bin
+  hashes:
+    binhash: 7b67ec9bfd5f786f707e566b14978873
+    md5: 1d4b17dce844321be7ca92d773f120bf
+work/Uvel.bin:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/Uvel.bin
+  hashes:
+    binhash: a5a3b8b075e26cc04fd40b23909cf7a7
+    md5: 7952a5dc839be27096ae40090b8e66c4
+work/Vvel.bin:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/Vvel.bin
+  hashes:
+    binhash: c273be45a7737a68c57069dab4356fb9
+    md5: 8eaecbad826a54bf7330403219388b15
+work/bathymetry.bin:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/bathymetry.bin
+  hashes:
+    binhash: 26cbc55dc60cf76ad2d69138d51947f2
+    md5: e11cc22aa594dfb637eb93dd24b39533
+work/icetopo.bin:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/icetopo.bin
+  hashes:
+    binhash: 2610faf967976de69aeadc9b047ce62a
+    md5: 4c7298c6fd78f9a74776e595c782d06e
+work/shelficemassinit.data:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/shelficemassinit.data
+  hashes:
+    binhash: a7f40bbc1d74fc894f340ad3c47936a9
+    md5: 274366d920b1f5f25c215b820e2adaaa
+work/shelficemassinit.meta:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/shelficemassinit.meta
+  hashes:
+    binhash: e764b89a7345ee009580238d355f5594
+    md5: 2cbd27fe267e030ccf14925774a318e7
+work/zeros.bin:
+  fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/zeros.bin
+  hashes:
+    binhash: bf8eeaf6dc769ab8023cc00142947c65
+    md5: 92ef391c5213ebe4f294b8e23152f9fc
