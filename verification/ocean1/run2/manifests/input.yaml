@@ -99,13 +99,13 @@ work/icetopo.bin:
 work/shelficemassinit.data:
   fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/shelficemassinit.data
   hashes:
-    binhash: a7f40bbc1d74fc894f340ad3c47936a9
-    md5: 274366d920b1f5f25c215b820e2adaaa
+    binhash: ca504df993647f3e3fded4701812d3f5
+    md5: 1750a2d99b70c974b809f8d6826323b6
 work/shelficemassinit.meta:
   fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/shelficemassinit.meta
   hashes:
-    binhash: e764b89a7345ee009580238d355f5594
-    md5: 2cbd27fe267e030ccf14925774a318e7
+    binhash: 349d0f1b040b3538e2693974d05aca7c
+    md5: b0bc3d965d907434114bea4ff8994b95
 work/zeros.bin:
   fullpath: /home/156/cy8964/MITgcm/verification/ocean1/input/zeros.bin
   hashes:

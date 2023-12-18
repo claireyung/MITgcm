@@ -483,10 +483,20 @@ C            gammaTurb = MAX(0.D0, gammaTurb)
             ELSE
              gammaTurb = gammaTurbConst
             ENDIF
-            shiTransCoeffT(i,j,bi,bj) = MAX( zeroRL,
-     &           ustar/(gammaTurb + gammaTmoleT) )
-            shiTransCoeffS(i,j,bi,bj) = MAX( zeroRL,
-     &           ustar/(gammaTurb + gammaTmoleS) )
+            IF (SHELFICEuseHJ99) THEN
+              PRINT *, 'Use HJ99'
+              shiTransCoeffT(i,j,bi,bj) = MAX( zeroRL,
+     &             ustar/(gammaTurb + gammaTmoleT) )
+              shiTransCoeffS(i,j,bi,bj) = MAX( zeroRL,
+     &             ustar/(gammaTurb + gammaTmoleS) )
+            ELSEIF (SHELFICEuseJ10) THEN
+                    shiTransCoeffT(i,j,bi,bj) = ustar *
+     &                  SHELFICEheatTransCoeffus
+                    shiTransCoeffS(i,j,bi,bj) = ustar * 
+     &                  SHELFICEsaltTransCoeffus
+            ELSE
+              PRINT *, 'HELP'
+            ENDIF
            ENDIF
           ENDDO
          ENDDO

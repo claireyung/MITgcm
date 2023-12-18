@@ -67,6 +67,10 @@ C     SHELFICEsplitThreshold   :: Thickness fraction remeshing threshold above
 C                                  which top-cell splits (no unit)
 C     SHELFICEmergeThreshold   :: Thickness fraction remeshing threshold below
 C                                  which top-cell merges with below (no unit)
+C     SHELFICEuseHJ99          :: Use exisitng HJ99 parameterisation
+C     SHELFICEuseJ10           :: Use transfer velcocity = constant * ustar
+C     SHELFICEheatTransCoeffus :: For J10, heat transfer coeff (def: 0.012)
+C     SHELFICEsaltTransCoeffus :: For J10, salt transfer coeff (def: 3.9e-4)
 C     -----------------------------------------------------------------------
 C     SHELFICEDragLinear       :: linear drag at bottom shelfice (1/s)
 C     SHELFICEDragQuadratic    :: quadratic drag at bottom shelfice (default
@@ -126,6 +130,7 @@ CEOP
      &     SHELFICE_dumpFreq, SHELFICE_taveFreq,
      &     SHELFICEsaltToHeatRatio,
      &     SHELFICEheatTransCoeff, SHELFICEsaltTransCoeff,
+     &     SHELFICEheatTransCoeffus, SHELFICEsaltTransCoeffus,
      &     rhoShelfice, SHELFICEkappa,
      &     SHELFICElatentHeat,
      &     SHELFICEheatCapacity_Cp,
@@ -152,6 +157,8 @@ CEOP
       _RL SHELFICEremeshFrequency
       _RL SHELFICEsplitThreshold
       _RL SHELFICEmergeThreshold
+      _RL SHELFICEheatTransCoeffus
+      _RL SHELFICEsaltTransCoeffus
 
       COMMON /SHELFICE_FIELDS_RL/
      &     shelficeMass, shelficeMassInit,
@@ -206,6 +213,8 @@ CEOP
       LOGICAL SHELFICE_tave_mnc
       LOGICAL SHELFICEadvDiffHeatFlux
       LOGICAL SHELFICEuseGammaFrict
+      LOGICAL SHELFICEuseHJ99
+      LOGICAL SHELFICEuseJ10
       LOGICAL SHELFICE_oldCalcUStar
       LOGICAL SHELFICEMassStepping
       LOGICAL SHELFICEDynMassOnly
@@ -224,6 +233,8 @@ CEOP
      &     SHELFICE_tave_mnc,
      &     SHELFICEadvDiffHeatFlux,
      &     SHELFICEuseGammaFrict,
+     &     SHELFICEuseHJ99,
+     &     SHELFICEuseJ10,
      &     SHELFICE_oldCalcUStar,
      &     SHELFICEMassStepping,
      &     SHELFICEDynMassOnly

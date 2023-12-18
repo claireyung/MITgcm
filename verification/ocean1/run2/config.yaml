@@ -16,7 +16,8 @@ exe: /home/156/cy8964/MITgcm/verification/ocean1/run2/mitgcmuv
 
 input: /home/156/cy8964/MITgcm/verification/ocean1/input/
 
-runlog: true
+runlog: false
+collate: false
 
 platform:
  nodesize: 48
