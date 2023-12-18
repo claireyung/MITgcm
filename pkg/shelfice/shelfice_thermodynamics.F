@@ -81,6 +81,8 @@ C     a0, a1, a2, b, c0
 C     eps1, eps2, eps3, eps3a, eps4, eps6, eps7, eps8
 C     aqe, bqe, cqe, discrim, recip_aqe
 C     drKp1, recip_drLoc
+C     itr22
+C     Lplus, Bb
       INTEGER I,J,K,Kp1
       INTEGER bi,bj
       _RL tLoc(1:sNx,1:sNy)
@@ -108,6 +110,8 @@ C     drKp1, recip_drLoc
       _RL gammaTmoleT, gammaTmoleS, gammaTurb, gammaTurbConst
       _RL ustar, ustarSq, etastar
       _RL u_tmp, v_tmp
+      _RL Lplus, Bb
+      INTEGER itr22
       PARAMETER ( shiTwoThirds = 0.66666666666666666666666666667D0 )
 #ifdef ALLOW_DIAGNOSTICS
       _RL uStarDiag(1-OLx:sNx+OLx,1-OLy:sNy+OLy,nSx,nSy)
@@ -489,7 +493,7 @@ C            gammaTurb = MAX(0.D0, gammaTurb)
      &             ustar/(gammaTurb + gammaTmoleT) )
               shiTransCoeffS(i,j,bi,bj) = MAX( zeroRL,
      &             ustar/(gammaTurb + gammaTmoleS) )
-            ELSEIF (SHELFICEuseJ10) THEN
+            ELSEIF ((SHELFICEuseJ10) .OR. (SHELFICEuseR22)) THEN
                     shiTransCoeffT(i,j,bi,bj) = ustar *
      &                  SHELFICEheatTransCoeffus
                     shiTransCoeffS(i,j,bi,bj) = ustar * 
@@ -682,6 +686,156 @@ C--        in order to conserve salt and temp even with real FW Flux
             shelficeForcingT      (I,J,bi,bj) = 0. _d 0
             shelficeForcingS      (I,J,bi,bj) = 0. _d 0
            ENDIF
+C     if using R22....
+           IF (SHELFICEuseR22) THEN
+C     get ustar from diag
+            ustar = uStarDiag(I,J,bi,bj)
+            DO itr22 = 1, 10
+             PRINT*, 'Entering R22 loop it ', itr22
+C     calculate buoyancy flux
+             Bb = gravity*(sBeta*rhoNil*shiTransCoeffS(i,j,bi,bj)*
+     &         (sLoc(I,J)-saltFreeze)-tAlpha*rhoNil*
+     &         shiTransCoeffT(i,j,bi,bj)*(tLoc(I,J)-thetaFreeze))
+             PRINT*, 'buoyancy forcing', Bb
+C     if buoyancy flux negative, i.e. melting, continue
+             IF (Bb > (0. _d 0)) THEN
+C     calculate Lplus      
+              Lplus = (recip_shiKarman*ustar**(4. _d 0))/
+     &         (Bb*shiKinVisc)
+              PRINT*, 'Lplus =', Lplus
+C     given Lplus, recalculate transfer coefficients      
+              shiTransCoeffS(i,j,bi,bj) =
+     &         MIN(EXP(SHELFICER22sa)*(Lplus**(SHELFICER22sb)),
+     &         SHELFICEsaltTransCoeffus)*ustar 
+              shiTransCoeffT(i,j,bi,bj) =
+     &         MIN(EXP(SHELFICER22tc)*(Lplus**(SHELFICER22td)),
+     &         SHELFICEheatTransCoeffus)*ustar         
+C     Now recalculate melt
+C     (insert old quadratic code)
+              IF ( K .NE. 0 .AND. pLoc(I,J) .GT. 0. _d 0 ) THEN
+C     heat flux into the ice shelf, default is diffusive flux
+C     (Holland and Jenkins, 1999, eq.21)
+               thetaFreeze = a0*sLoc(I,J)+c0+b*pLoc(I,J)
+               fwflxFac    = 0. _d 0
+               IF ( tLoc(I,J) .GT. thetaFreeze ) fwflxFac = dFac
+C     a few abbreviations
+               eps1 = rUnit2mass*HeatCapacity_Cp
+     &           *shiTransCoeffT(i,j,bi,bj)
+               eps2 = rUnit2mass*SHELFICElatentHeat
+     &           *shiTransCoeffS(i,j,bi,bj)
+   
+C     solve quadratic equation for salinity at shelfice-ocean interface
+C     note: this part of the code is not very intuitive as it involves
+C     many arbitrary abbreviations that were introduced to derive the
+C     correct form of the quadratic equation for salinity. The abbreviations
+C     only make sense in connection with my notes on this (M.Losch)
+C
+C     eps3a was introduced as a constant variant of eps3 to avoid AD of
+C     code of typ (pLoc-const)/pLoc
+               eps3a = rhoShelfIce*SHELFICEheatCapacity_Cp
+     &           * SHELFICEkappa *  ( 1. _d 0 - dFac )
+               eps3 = eps3a/pLoc(I,J)
+               eps4 = b*pLoc(I,J) + c0
+               eps6 = eps4 - tLoc(I,J)
+               eps7 = eps4 - SHELFICEthetaSurface
+               eps8 = rUnit2mass*SHELFICEheatCapacity_Cp
+     &           *shiTransCoeffS(i,j,bi,bj) * fwflxFac
+               aqe = a0  *(eps1+eps3-eps8)
+               recip_aqe = 0. _d 0
+               IF ( aqe .NE. 0. _d 0 ) recip_aqe = 0.5 _d 0/aqe
+c           bqe = eps1*eps6 + eps3*eps7 - eps2
+               bqe = eps1*eps6
+     &           + eps3a*( b
+     &                   + ( c0 - SHELFICEthetaSurface )/pLoc(I,J) )
+     &           - eps2
+     &           + eps8*( a0*sLoc(I,J) - eps7 )
+               cqe = ( eps2 + eps8*eps7 )*sLoc(I,J)
+               discrim = bqe*bqe - 4. _d 0*aqe*cqe
+#undef ALLOW_SHELFICE_DEBUG
+#ifdef ALLOW_SHELFICE_DEBUG
+               IF ( discrim .LT. 0. _d 0 ) THEN
+                print *, 'ml-shelfice: discrim = ', discrim,aqe,bqe,cqe
+                print *, 'ml-shelfice: pLoc    = ', pLoc(I,J)
+                print *, 'ml-shelfice: tLoc    = ', tLoc(I,J)
+                print *, 'ml-shelfice: sLoc    = ', sLoc(I,J)
+                print *, 'ml-shelfice: tsurface= ',
+     &            SHELFICEthetaSurface
+                print *, 'ml-shelfice: eps1    = ', eps1
+                print *, 'ml-shelfice: eps2    = ', eps2
+                print *, 'ml-shelfice: eps3    = ', eps3
+                print *, 'ml-shelfice: eps4    = ', eps4
+                print *, 'ml-shelfice: eps6    = ', eps6
+                print *, 'ml-shelfice: eps7    = ', eps7
+                print *, 'ml-shelfice: eps8    = ', eps8
+                print *, 'ml-shelfice: rU2mass = ', rUnit2mass
+                print *, 'ml-shelfice: rhoIce  = ', rhoShelfIce
+                print *, 'ml-shelfice: cFac    = ', cFac
+                print *, 'ml-shelfice: Cp_W    = ', HeatCapacity_Cp
+                print *, 'ml-shelfice: Cp_I    = ',
+     &            SHELFICEHeatCapacity_Cp
+                print *, 'ml-shelfice: gammaT  = ',
+     &            SHELFICEheatTransCoeff
+                print *, 'ml-shelfice: gammaS  = ',
+     &            SHELFICEsaltTransCoeff
+                print *, 'ml-shelfice: lat.heat= ',
+     &            SHELFICElatentHeat
+                STOP 'ABNORMAL END in S/R SHELFICE_THERMODYNAMICS'
+               ENDIF
+#endif /* ALLOW_SHELFICE_DEBUG */
+               saltFreeze = (- bqe - SQRT(discrim))*recip_aqe
+               IF ( saltFreeze .LT. 0. _d 0 )
+     &           saltFreeze = (- bqe + SQRT(discrim))*recip_aqe
+               thetaFreeze = a0*saltFreeze + eps4
+C--   upward fresh water flux due to melting (in kg/m^2/s)
+cph change to identical form
+cph            freshWaterFlux = rUnit2mass
+cph     &           * shiTransCoeffS(i,j,bi,bj)
+cph     &           * ( saltFreeze - sLoc(I,J) ) / saltFreeze
+               freshWaterFlux = rUnit2mass
+     &           * shiTransCoeffS(i,j,bi,bj)
+     &           * ( 1. _d 0 - sLoc(I,J) / saltFreeze )
+#ifdef ALLOW_GENTIM2D_CONTROL
+     &           + xx_shifwflx_loc(I,J,bi,bj)
+#endif /*  ALLOW_GENTIM2D_CONTROL */
+C--   Calculate the upward heat and fresh water fluxes;
+C--   MITgcm sign conventions: downward (negative) fresh water flux
+C--   implies melting and due to upward (positive) heat flux
+               shelfIceHeatFlux(I,J,bi,bj) =
+     &           ( eps3
+     &           - freshWaterFlux*SHELFICEheatCapacity_Cp*fwflxFac )
+     &           * ( thetaFreeze - SHELFICEthetaSurface )
+     &           -  cFac*freshWaterFlux*( SHELFICElatentHeat
+     &             - HeatCapacity_Cp*( thetaFreeze - rFac*tLoc(I,J) ) )
+               shelfIceFreshWaterFlux(I,J,bi,bj) = freshWaterFlux
+C--   compute surface tendencies
+C--   DNG: correction to use cell value for flux rather than BL values
+C--        in order to conserve salt and temp even with real FW Flux
+               shelficeForcingT(i,j,bi,bj) =
+     &           ( shiTransCoeffT(i,j,bi,bj)
+     &           - cFac*freshWaterFlux*mass2rUnit
+     &           )*( thetaFreeze - tLoc(I,J) )
+     &           - rFWinBL*freshWaterFlux*mass2rUnit
+     &            *( tLoc(I,J) - theta(I,J,K,bi,bj) )
+               shelficeForcingS(i,j,bi,bj) =
+     &           ( shiTransCoeffS(i,j,bi,bj)
+     &           - cFac*freshWaterFlux*mass2rUnit
+     &           )*( saltFreeze - sLoc(I,J) )
+     &           - rFWinBL*freshWaterFlux*mass2rUnit
+     &            *( sLoc(I,J) - salt(I,J,K,bi,bj) )
+              ELSE
+               shelfIceHeatFlux      (I,J,bi,bj) = 0. _d 0
+               shelfIceFreshWaterFlux(I,J,bi,bj) = 0. _d 0
+               shelficeForcingT      (I,J,bi,bj) = 0. _d 0
+               shelficeForcingS      (I,J,bi,bj) = 0. _d 0
+              ENDIF
+   
+
+C     finish R22 param (if is buoyancy being melt)
+             ENDIF
+            ENDDO
+C     end R22 if
+           ENDIF
+C     end i, j loops
           ENDDO
          ENDDO
 C     endif (not) useISOMIPTD

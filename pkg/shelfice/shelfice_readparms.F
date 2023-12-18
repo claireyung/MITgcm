@@ -43,6 +43,10 @@ CEOP
      &     SHELFICEheatTransCoeff,
      &     SHELFICEsaltTransCoeff,
      &     SHELFICEheatTransCoeffus,
+     &     SHELFICER22sa,
+     &     SHELFICER22sb,
+     &     SHELFICER22tc,
+     &     SHELFICER22td,
      &     SHELFICEsaltTransCoeffus,
      &     SHELFICEMassStepping,
      &     rhoShelfice, SHELFICEkappa,
@@ -65,6 +69,7 @@ CEOP
      &     SHELFICEadvDiffHeatFlux,
      &     SHELFICEuseGammaFrict, SHELFICE_oldCalcUStar,
      &     SHELFICEuseHJ99, SHELFICEuseJ10,
+     &     SHELFICEuseR22,
      &     shiCdrag, shiZetaN, shiRc,
      &     shiPrandtl, shiSchmidt, shiKinVisc,
 #ifdef ALLOW_COST
@@ -112,8 +117,12 @@ C Set defaults values for parameters in SHELFICE.h
       SHELFICEsaltToHeatRatio  =   5.05 _d -03
       SHELFICEheatTransCoeff   =    1.0 _d -04
       SHELFICEsaltTransCoeff   = UNSET_RL
-      SHELFICEheatTransCoeffus = 1.2 _d -02
-      SHELFICEsaltTransCoeffus = 3.9 _d -04
+      SHELFICEheatTransCoeffus =    1.2 _d -02
+      SHELFICEsaltTransCoeffus =    3.9 _d -04
+      SHELFICER22sa            = - 9.29 _d 0
+      SHELFICER22sb            =   1.22 _d -1
+      SHELFICER22tc            = - 7.59 _d 0
+      SHELFICER22td            =   3.54 _d -1
       SHELFICEkappa            =   1.54 _d -06
       SHELFICEthetaSurface     = - 20.0 _d 0
       no_slip_shelfice         = no_slip_bottom
@@ -127,6 +136,7 @@ C Set defaults values for parameters in SHELFICE.h
       SHELFICEuseGammaFrict    = .FALSE.
       SHELFICEuseHJ99          = .TRUE.
       SHELFICEuseJ10           = .FALSE.
+      SHELFICEuseR22           = .FALSE.
       SHELFICE_oldCalcUStar    = .FALSE.
       SHELFICEremeshFrequency  = 0.
       SHELFICEsplitThreshold   = hFacMin*1.1 _d 0 + 1. _d 0

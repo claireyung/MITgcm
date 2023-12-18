@@ -69,8 +69,13 @@ C     SHELFICEmergeThreshold   :: Thickness fraction remeshing threshold below
 C                                  which top-cell merges with below (no unit)
 C     SHELFICEuseHJ99          :: Use exisitng HJ99 parameterisation
 C     SHELFICEuseJ10           :: Use transfer velcocity = constant * ustar
+C     SHELFICEuseR22           :: Use R22 parametersiation (variable coeff)
 C     SHELFICEheatTransCoeffus :: For J10, heat transfer coeff (def: 0.012)
 C     SHELFICEsaltTransCoeffus :: For J10, salt transfer coeff (def: 3.9e-4)
+C     SHELFICER22sa            :: For R22, coefficient A (def: -9.29) 
+C     SHELFICER22sb            :: For R22, coefficient B (def: 0.122)
+C     SHELFICER22tc            :: For R22, coefficient C (def: -7.58)
+C     SHELFICER22td            :: For R22, coefficient D (def: 0.354)
 C     -----------------------------------------------------------------------
 C     SHELFICEDragLinear       :: linear drag at bottom shelfice (1/s)
 C     SHELFICEDragQuadratic    :: quadratic drag at bottom shelfice (default
@@ -131,6 +136,8 @@ CEOP
      &     SHELFICEsaltToHeatRatio,
      &     SHELFICEheatTransCoeff, SHELFICEsaltTransCoeff,
      &     SHELFICEheatTransCoeffus, SHELFICEsaltTransCoeffus,
+     &     SHELFICER22sa, SHELFICER22sb,
+     &     SHELFICER22tc, SHELFICER22td,
      &     rhoShelfice, SHELFICEkappa,
      &     SHELFICElatentHeat,
      &     SHELFICEheatCapacity_Cp,
@@ -159,6 +166,10 @@ CEOP
       _RL SHELFICEmergeThreshold
       _RL SHELFICEheatTransCoeffus
       _RL SHELFICEsaltTransCoeffus
+      _RL SHELFICER22sa
+      _RL SHELFICER22sb
+      _RL SHELFICER22tc
+      _RL SHELFICER22td
 
       COMMON /SHELFICE_FIELDS_RL/
      &     shelficeMass, shelficeMassInit,
@@ -215,6 +226,7 @@ CEOP
       LOGICAL SHELFICEuseGammaFrict
       LOGICAL SHELFICEuseHJ99
       LOGICAL SHELFICEuseJ10
+      LOGICAL SHELFICEuseR22
       LOGICAL SHELFICE_oldCalcUStar
       LOGICAL SHELFICEMassStepping
       LOGICAL SHELFICEDynMassOnly
@@ -235,6 +247,7 @@ CEOP
      &     SHELFICEuseGammaFrict,
      &     SHELFICEuseHJ99,
      &     SHELFICEuseJ10,
+     &     SHELFICEuseR22,
      &     SHELFICE_oldCalcUStar,
      &     SHELFICEMassStepping,
      &     SHELFICEDynMassOnly
