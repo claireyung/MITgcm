@@ -236,6 +236,13 @@ c     ENDIF
        CALL DIAGNOSTICS_ADDTOLIST( diagNum,
      I      diagName, diagCode, diagUnits, diagTitle, 0, myThid )
 
+       diagName  = 'SHILplus'
+       diagTitle = 'Viscous Obukhov scale at bottom of ice shelf'
+       diagUnits = '1             '
+       diagCode  = 'SM      L1      '
+       CALL DIAGNOSTICS_ADDTOLIST( diagNum,
+     I      diagName, diagCode, diagUnits, diagTitle, 0, myThid )
+
        diagName  = 'SHICDrag'
        diagTitle = 'Shelfice drag coefficient for u* parameterization'
        diagUnits = '1               '

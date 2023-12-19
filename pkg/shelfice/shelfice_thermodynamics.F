@@ -115,6 +115,7 @@ C     Lplus, Bb
       PARAMETER ( shiTwoThirds = 0.66666666666666666666666666667D0 )
 #ifdef ALLOW_DIAGNOSTICS
       _RL uStarDiag(1-OLx:sNx+OLx,1-OLy:sNy+OLy,nSx,nSy)
+      _RL LplusDiag(1-OLx:sNx+OLx,1-OLy:sNy+OLy,nSx,nSy)
 #endif /* ALLOW_DIAGNOSTICS */
 #endif /*SHI_ALLOW_GAMMAFRICT */
 
@@ -215,6 +216,7 @@ C     where this value is part of the protocol
           shelficeForcingS      (I,J,bi,bj) = 0. _d 0
 #if (defined SHI_ALLOW_GAMMAFRICT && defined ALLOW_DIAGNOSTICS)
           uStarDiag             (I,J,bi,bj) = 0. _d 0
+          LplusDiag             (I,J,bi,bj) = 0. _d 0
 #endif /* SHI_ALLOW_GAMMAFRICT and ALLOW_DIAGNOSTICS */
 #ifdef ALLOW_GENTIM2D_CONTROL
           xx_shifwflx_loc       (I,J,bi,bj) = 0. _d 0
@@ -488,7 +490,7 @@ C            gammaTurb = MAX(0.D0, gammaTurb)
              gammaTurb = gammaTurbConst
             ENDIF
             IF (SHELFICEuseHJ99) THEN
-              PRINT *, 'Use HJ99'
+C              PRINT *, 'Use HJ99'
               shiTransCoeffT(i,j,bi,bj) = MAX( zeroRL,
      &             ustar/(gammaTurb + gammaTmoleT) )
               shiTransCoeffS(i,j,bi,bj) = MAX( zeroRL,
@@ -499,7 +501,7 @@ C            gammaTurb = MAX(0.D0, gammaTurb)
                     shiTransCoeffS(i,j,bi,bj) = ustar * 
      &                  SHELFICEsaltTransCoeffus
             ELSE
-              PRINT *, 'HELP'
+C              PRINT *, 'HELP'
             ENDIF
            ENDIF
           ENDDO
@@ -691,18 +693,18 @@ C     if using R22....
 C     get ustar from diag
             ustar = uStarDiag(I,J,bi,bj)
             DO itr22 = 1, 10
-             PRINT*, 'Entering R22 loop it ', itr22
+C             PRINT*, 'Entering R22 loop it ', itr22
 C     calculate buoyancy flux
              Bb = gravity*(sBeta*rhoNil*shiTransCoeffS(i,j,bi,bj)*
      &         (sLoc(I,J)-saltFreeze)-tAlpha*rhoNil*
      &         shiTransCoeffT(i,j,bi,bj)*(tLoc(I,J)-thetaFreeze))
-             PRINT*, 'buoyancy forcing', Bb
+C             PRINT*, 'buoyancy forcing', Bb
 C     if buoyancy flux negative, i.e. melting, continue
              IF (Bb > (0. _d 0)) THEN
 C     calculate Lplus      
               Lplus = (recip_shiKarman*ustar**(4. _d 0))/
      &         (Bb*shiKinVisc)
-              PRINT*, 'Lplus =', Lplus
+C              PRINT*, 'Lplus =', Lplus
 C     given Lplus, recalculate transfer coefficients      
               shiTransCoeffS(i,j,bi,bj) =
      &         MIN(EXP(SHELFICER22sa)*(Lplus**(SHELFICER22sb)),
@@ -835,6 +837,10 @@ C     finish R22 param (if is buoyancy being melt)
             ENDDO
 C     end R22 if
            ENDIF
+#ifdef ALLOW_DIAGNOSTICS
+           LplusDiag(I,J,bi,bj) = Lplus
+#endif /* ALLOW_DIAGNOSTICS */
+
 C     end i, j loops
           ENDDO
          ENDDO
@@ -872,6 +878,7 @@ C     Friction velocity
 #ifdef SHI_ALLOW_GAMMAFRICT
        IF ( SHELFICEuseGammaFrict ) THEN
         CALL DIAGNOSTICS_FILL(uStarDiag,'SHIuStar',0,1,0,1,1,myThid)
+        CALL DIAGNOSTICS_FILL(LplusDiag,'SHILplus',0,1,0,1,1,myThid)
         CALL DIAGNOSTICS_FILL(shiCDragFld,'SHICDrag',
      &      0,1,0,1,1,myThid)
        ENDIF
