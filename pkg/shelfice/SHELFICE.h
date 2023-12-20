@@ -55,6 +55,12 @@ C                                 with the following parameters (def: F):
 C     SHELFICE_oldCalcUStar    :: use old uStar averaging expression
 C     shiCdrag                 :: quadratic drag coefficient to compute uStar
 C                                 (def: 0.0015)
+C     shiuStarMin              :: Prescribe a minimum ustar. Default is current
+C                                 cdrag * 1e-6 (def: 5e-5)
+C     SHELFICEuseTidal         :: Use tidal velocity in ustar calculation,
+C                                 shiuStarTide (def: F)
+C     shiuStarTidal            :: Prescribe a tidal velocity to add to ustar 
+C                                 (def: 0 m/s)
 C     shiZetaN                 :: ??? (def: 0.052)
 C     shiRc                    :: ??? (not used, def: 0.2)
 C     shiPrandtl, shiSchmidt   :: constant Prandtl (13.8) and Schmidt (2432.0)
@@ -144,6 +150,7 @@ CEOP
      &     SHELFICEthetaSurface,
      &     SHELFICEDragLinear, SHELFICEDragQuadratic,
      &     shiCdrag, shiZetaN, shiRc,
+     &     shiuStarMin, shiuStarTidal,
      &     shiPrandtl, shiSchmidt, shiKinVisc,
      &     SHELFICEremeshFrequency,
      &     SHELFICEsplitThreshold, SHELFICEmergeThreshold
@@ -160,6 +167,7 @@ CEOP
       _RL SHELFICEDragQuadratic
       _RL SHELFICEthetaSurface
       _RL shiCdrag, shiZetaN, shiRc
+      _RL shiuStarMin, shiuStarTidal
       _RL shiPrandtl, shiSchmidt, shiKinVisc
       _RL SHELFICEremeshFrequency
       _RL SHELFICEsplitThreshold
@@ -224,6 +232,7 @@ CEOP
       LOGICAL SHELFICE_tave_mnc
       LOGICAL SHELFICEadvDiffHeatFlux
       LOGICAL SHELFICEuseGammaFrict
+      LOGICAL SHELFICEuseTidal
       LOGICAL SHELFICEuseHJ99
       LOGICAL SHELFICEuseJ10
       LOGICAL SHELFICEuseR22
@@ -245,6 +254,7 @@ CEOP
      &     SHELFICE_tave_mnc,
      &     SHELFICEadvDiffHeatFlux,
      &     SHELFICEuseGammaFrict,
+     &     SHELFICEuseTidal,
      &     SHELFICEuseHJ99,
      &     SHELFICEuseJ10,
      &     SHELFICEuseR22,

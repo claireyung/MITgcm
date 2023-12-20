@@ -82,7 +82,7 @@ C     eps1, eps2, eps3, eps3a, eps4, eps6, eps7, eps8
 C     aqe, bqe, cqe, discrim, recip_aqe
 C     drKp1, recip_drLoc
 C     itr22
-C     Lplus, Bb
+C     Lplus, Bb, rhoml
       INTEGER I,J,K,Kp1
       INTEGER bi,bj
       _RL tLoc(1:sNx,1:sNy)
@@ -110,7 +110,7 @@ C     Lplus, Bb
       _RL gammaTmoleT, gammaTmoleS, gammaTurb, gammaTurbConst
       _RL ustar, ustarSq, etastar
       _RL u_tmp, v_tmp
-      _RL Lplus, Bb
+      _RL Lplus, Bb, rhoml
       INTEGER itr22
       PARAMETER ( shiTwoThirds = 0.66666666666666666666666666667D0 )
 #ifdef ALLOW_DIAGNOSTICS
@@ -469,8 +469,16 @@ C--   to the surface
           DO I = 1, sNx
            K = kTopC(I,J,bi,bj)
            IF ( K .NE. 0 .AND. pLoc(I,J) .GT. 0. _d 0 ) THEN
-            ustarSq = shiCdragfld(I,J,bi,bj) * MAX( 1.D-6, velSq(I,J) )
-            ustar   = SQRT(ustarSq)
+            IF (SHELFICEuseTidal) THEN
+             ustarSq = shiCdragfld(I,J,bi,bj) * ( velSq(I,J) +
+     &          shiuStarTidal**2)
+             ustar  = SQRT(ustarSq)
+            ELSE
+             ustarSq = shiCdragfld(I,J,bi,bj) *  velSq(I,J)
+             ustar = max(SQRT(ustarSq), shiuStarMin)
+C old            ustarSq = shiCdragfld(I,J,bi,bj) * MAX( 1.D-6, velSq(I,J) )
+            ENDIF
+C old            ustar   = SQRT(ustarSq)
 #ifdef ALLOW_DIAGNOSTICS
             uStarDiag(I,J,bi,bj) = ustar
 #endif /* ALLOW_DIAGNOSTICS */
@@ -692,17 +700,26 @@ C     if using R22....
            IF (SHELFICEuseR22) THEN
 C     get ustar from diag
             ustar = uStarDiag(I,J,bi,bj)
+C            PRINT*, 'USTAR', ustar
+C     get density from linear EOS with tref = -1.9,sref=34.4
+            rhoml = rhoNil*(sBeta*(sLoc(I,J)-(34.4))-
+     &         tAlpha*(tLoc(I,J)+1.9))+(rhoNil) 
+C            PRINT*, 'rhoml', rhoml
+C            PRINT*, 'tLoc', tLoc(I,J)
+C            PRINT*, 'sLoc', sLoc(I,J)
             DO itr22 = 1, 10
 C             PRINT*, 'Entering R22 loop it ', itr22
 C     calculate buoyancy flux
-             Bb = gravity*(sBeta*rhoNil*shiTransCoeffS(i,j,bi,bj)*
+             Bb = -gravity*(sBeta*rhoNil*shiTransCoeffS(i,j,bi,bj)*
      &         (sLoc(I,J)-saltFreeze)-tAlpha*rhoNil*
-     &         shiTransCoeffT(i,j,bi,bj)*(tLoc(I,J)-thetaFreeze))
+     &         shiTransCoeffT(i,j,bi,bj)*(tLoc(I,J)-thetaFreeze))/rhoml
 C             PRINT*, 'buoyancy forcing', Bb
+C             PRINT*, 'thetaFreeze', thetaFreeze
+C             PRINT*, 'saltFreeze', saltFreeze
 C     if buoyancy flux negative, i.e. melting, continue
-             IF (Bb > (0. _d 0)) THEN
+             IF (Bb < (0. _d 0)) THEN
 C     calculate Lplus      
-              Lplus = (recip_shiKarman*ustar**(4. _d 0))/
+              Lplus = -(recip_shiKarman*ustar**(4. _d 0))/
      &         (Bb*shiKinVisc)
 C              PRINT*, 'Lplus =', Lplus
 C     given Lplus, recalculate transfer coefficients      

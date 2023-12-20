@@ -69,8 +69,9 @@ CEOP
      &     SHELFICEadvDiffHeatFlux,
      &     SHELFICEuseGammaFrict, SHELFICE_oldCalcUStar,
      &     SHELFICEuseHJ99, SHELFICEuseJ10,
-     &     SHELFICEuseR22,
+     &     SHELFICEuseR22, SHELFICEuseTidal,
      &     shiCdrag, shiZetaN, shiRc,
+     &     shiuStarMin, shiuStarTidal,
      &     shiPrandtl, shiSchmidt, shiKinVisc,
 #ifdef ALLOW_COST
      &     mult_shelfice,
@@ -134,6 +135,7 @@ C Set defaults values for parameters in SHELFICE.h
       SHELFICE_taveFreq        = taveFreq
       SHELFICEadvDiffHeatFlux  = .FALSE.
       SHELFICEuseGammaFrict    = .FALSE.
+      SHELFICEuseTidal         = .FALSE.
       SHELFICEuseHJ99          = .TRUE.
       SHELFICEuseJ10           = .FALSE.
       SHELFICEuseR22           = .FALSE.
@@ -148,6 +150,9 @@ C these params. are default of Holland and Jenkins (1999)
       shiPrandtl               = 13.8 _d 0
       shiSchmidt               = 2432.0 _d 0
       shiKinVisc               = 1.95 _d -6
+C minimum friction velocity control
+      shiuStarMin              = 5. _d -5
+      shiuStarTidal            = 0. _d 0      
 #ifdef ALLOW_COST
       mult_shelfice            = 0. _d 0
       mult_shifwflx            = 0. _d 0
