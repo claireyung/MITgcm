@@ -48,6 +48,11 @@ C                                 (def: 1e-4 m/s)
 C     SHELFICEsaltTransCoeff   :: constant salinity transfer coefficient that
 C                                 determines salt flux into shelfice
 C                                 (def: SHELFICEsaltToHeatRatio * SHELFICEheatTransCoeff)
+C     shiLinFrEOSa             :: Linear freezing point salinity dependence
+C                                 (def: -0.0575degC/psu)
+C     shiLinFrEOSb             :: Linear freezing point pressure dependence
+C                                 (def: -7.61e-4degC/dBar)
+C     shiLinFrEOSc             :: Linear freezing point zero (def: 0.0901 degC)
 C     -----------------------------------------------------------------------
 C     SHELFICEuseGammaFrict    :: use velocity dependent exchange coefficients,
 C                                 see Holland and Jenkins (1999), eq.11-18,
@@ -144,6 +149,7 @@ CEOP
      &     SHELFICEheatTransCoeffus, SHELFICEsaltTransCoeffus,
      &     SHELFICER22sa, SHELFICER22sb,
      &     SHELFICER22tc, SHELFICER22td,
+     &     shiLinFrEOSa, shiLinFrEOSb, shiLinFrEOSc,
      &     rhoShelfice, SHELFICEkappa,
      &     SHELFICElatentHeat,
      &     SHELFICEheatCapacity_Cp,
@@ -178,6 +184,7 @@ CEOP
       _RL SHELFICER22sb
       _RL SHELFICER22tc
       _RL SHELFICER22td
+      _RL shiLinFrEOSa,shiLinFrEOSb, shiLinFrEOSc
 
       COMMON /SHELFICE_FIELDS_RL/
      &     shelficeMass, shelficeMassInit,

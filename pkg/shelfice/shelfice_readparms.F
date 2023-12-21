@@ -47,6 +47,7 @@ CEOP
      &     SHELFICER22sb,
      &     SHELFICER22tc,
      &     SHELFICER22td,
+     &     shiLinFrEOSa, shiLinFrEOSb, shiLinFrEOSc,
      &     SHELFICEsaltTransCoeffus,
      &     SHELFICEMassStepping,
      &     rhoShelfice, SHELFICEkappa,
@@ -126,6 +127,9 @@ C Set defaults values for parameters in SHELFICE.h
       SHELFICER22td            =   3.54 _d -1
       SHELFICEkappa            =   1.54 _d -06
       SHELFICEthetaSurface     = - 20.0 _d 0
+      shiLinFrEOSa             = -0.0575 _d 0
+      shiLinFrEOSb             = - 7.61 _d -4
+      shiLinFrEOSc             = 0.0901 _d 0
       no_slip_shelfice         = no_slip_bottom
       SHELFICEDragLinear       = bottomDragLinear
       SHELFICEDragQuadratic    = UNSET_RL

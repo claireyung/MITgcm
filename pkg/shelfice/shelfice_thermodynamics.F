@@ -110,7 +110,7 @@ C     Lplus, Bb, rhoml
       _RL gammaTmoleT, gammaTmoleS, gammaTurb, gammaTurbConst
       _RL ustar, ustarSq, etastar
       _RL u_tmp, v_tmp
-      _RL Lplus, Bb, rhoml
+      _RL Lplus, Bb, rhoml, Lplus_new, Lplus_old
       INTEGER itr22
       PARAMETER ( shiTwoThirds = 0.66666666666666666666666666667D0 )
 #ifdef ALLOW_DIAGNOSTICS
@@ -186,11 +186,11 @@ C     (Holland and Jenkins, 1999, eq.21)
       IF ( SHELFICEadvDiffHeatFlux ) dFac = 1. _d 0
       fwflxFac = 0. _d 0
 C     linear dependence of freezing point on salinity
-      a0 = -0.0575   _d  0
+      a0 = shiLinFrEOSa
       a1 =  0.0      _d -0
       a2 =  0.0      _d -0
-      c0 =  0.0901   _d  0
-      b  =  -7.61    _d -4
+      c0 = shiLinFrEOSc
+      b  = shiLinFrEOSb
 #ifdef ALLOW_ISOMIP_TD
       IF ( useISOMIPTD ) THEN
 C     non-linear dependence of freezing point on salinity
@@ -707,28 +707,40 @@ C     get density from linear EOS with tref = -1.9,sref=34.4
 C            PRINT*, 'rhoml', rhoml
 C            PRINT*, 'tLoc', tLoc(I,J)
 C            PRINT*, 'sLoc', sLoc(I,J)
-            DO itr22 = 1, 10
-C             PRINT*, 'Entering R22 loop it ', itr22
 C     calculate buoyancy flux
-             Bb = -gravity*(sBeta*rhoNil*shiTransCoeffS(i,j,bi,bj)*
+            Bb = -gravity*(sBeta*rhoNil*shiTransCoeffS(i,j,bi,bj)*
      &         (sLoc(I,J)-saltFreeze)-tAlpha*rhoNil*
      &         shiTransCoeffT(i,j,bi,bj)*(tLoc(I,J)-thetaFreeze))/rhoml
-C             PRINT*, 'buoyancy forcing', Bb
-C             PRINT*, 'thetaFreeze', thetaFreeze
-C             PRINT*, 'saltFreeze', saltFreeze
+C            PRINT*, 'buoyancy forcing', Bb
+C            PRINT*, 'thetaFreeze', thetaFreeze
+C            PRINT*, 'saltFreeze', saltFreeze
+C     calculate Lplus for the first time
+            Lplus = -(recip_shiKarman*ustar**(4. _d 0))/
+     &         (Bb*shiKinVisc)             
 C     if buoyancy flux negative, i.e. melting, continue
-             IF (Bb < (0. _d 0)) THEN
-C     calculate Lplus      
-              Lplus = -(recip_shiKarman*ustar**(4. _d 0))/
+            IF (Bb < (0. _d 0)) THEN
+             DO itr22 = 1, 10
+C              PRINT*, 'Entering R22 loop it ', itr22
+C     update buoyancy for next iteration
+              Bb = -gravity*(sBeta*rhoNil*shiTransCoeffS(i,j,bi,bj)*
+     &         (sLoc(I,J)-saltFreeze)-tAlpha*rhoNil*
+     &         shiTransCoeffT(i,j,bi,bj)*(tLoc(I,J)-thetaFreeze))/rhoml
+C     calculate Lplus with new buoyancy
+              Lplus_new = -(recip_shiKarman*ustar**(4. _d 0))/
      &         (Bb*shiKinVisc)
-C              PRINT*, 'Lplus =', Lplus
+C     update Lplus with midpoint of previous and new Lplus
+              Lplus_old = Lplus
+              Lplus = (5. _d -1)*(Lplus_old+Lplus_new)
 C     given Lplus, recalculate transfer coefficients      
               shiTransCoeffS(i,j,bi,bj) =
      &         MIN(EXP(SHELFICER22sa)*(Lplus**(SHELFICER22sb)),
-     &         SHELFICEsaltTransCoeffus)*ustar 
+     &         SHELFICEsaltTransCoeffus)*ustar
               shiTransCoeffT(i,j,bi,bj) =
      &         MIN(EXP(SHELFICER22tc)*(Lplus**(SHELFICER22td)),
-     &         SHELFICEheatTransCoeffus)*ustar         
+     &         SHELFICEheatTransCoeffus)*ustar
+C              PRINT*, 'Lplus =', Lplus
+C              PRINT*, 'buoyancy forcing', Bb
+
 C     Now recalculate melt
 C     (insert old quadratic code)
               IF ( K .NE. 0 .AND. pLoc(I,J) .GT. 0. _d 0 ) THEN
@@ -847,11 +859,10 @@ C--        in order to conserve salt and temp even with real FW Flux
                shelficeForcingT      (I,J,bi,bj) = 0. _d 0
                shelficeForcingS      (I,J,bi,bj) = 0. _d 0
               ENDIF
-   
-
+              
 C     finish R22 param (if is buoyancy being melt)
-             ENDIF
-            ENDDO
+             ENDDO
+            ENDIF
 C     end R22 if
            ENDIF
 #ifdef ALLOW_DIAGNOSTICS
