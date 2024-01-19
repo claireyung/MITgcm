@@ -111,12 +111,14 @@ C     Lplus, Bb, rhoml
       _RL ustar, ustarSq, etastar
       _RL u_tmp, v_tmp
       _RL Lplus, Bb, rhoml, Lplus_new, Lplus_old
+      _RL kappa_t, kappa_s, c_1
       INTEGER itr22
       PARAMETER ( shiTwoThirds = 0.66666666666666666666666666667D0 )
 #ifdef ALLOW_DIAGNOSTICS
       _RL uStarDiag(1-OLx:sNx+OLx,1-OLy:sNy+OLy,nSx,nSy)
       _RL LplusDiag(1-OLx:sNx+OLx,1-OLy:sNy+OLy,nSx,nSy)
 #endif /* ALLOW_DIAGNOSTICS */
+      _RL shiTransCoeffTconv(1-OLx:sNx+OLx,1-OLy:sNy+OLy,nSx,nSy)
 #endif /*SHI_ALLOW_GAMMAFRICT */
 
 #ifndef ALLOW_OPENAD
@@ -155,6 +157,9 @@ C     Implement friction velocity-dependent transfer coefficient
 C     of Holland and Jenkins, JPO, 1999
        recip_shiKarman= 1. _d 0 / 0.4 _d 0
        shiLo = 0. _d 0
+       kappa_t = shiKinVisc/shiPrandtl
+       kappa_s = shiKinVisc/shiSchmidt
+       c_1 = 9.7 _d -2
        shiPr = shiPrandtl**shiTwoThirds
        shiSc = shiSchmidt**shiTwoThirds
 cph      shiPr = (viscArNr(1)/diffKrNrT(1))**shiTwoThirds
@@ -511,6 +516,22 @@ C              PRINT *, 'Use HJ99'
             ELSE
 C              PRINT *, 'HELP'
             ENDIF
+C      Use convective param
+            IF (SHELFICEuseMK18limit) THEN
+              shiTransCoeffTconv(i,j,bi,bj) = c_1*(gravity*(sLoc(I,J)
+     &              -saltFreeze)
+     &              *sBeta*rhoNil*kappa_s**(5. _d -1)
+     &              /shiKinVisc)**(3.333 _d -1)
+     &              * kappa_t**(5. _d -1)* rhoml/rhoShelfIce
+     &              * COS(shiConvTheta*(3.1415 _d 0)/(1.8 _d 2))
+     &              **(shiTwoThirds)
+              shiTransCoeffT(i,j,bi,bj) = MAX(
+     &             shiTransCoeffTconv(i,j,bi,bj),
+     &             shiTransCoeffT(i,j,bi,bj))
+              shiTransCoeffS(i,j,bi,bj) = MAX(
+     &             shiTransCoeffTconv(i,j,bi,bj)/35,
+     &             shiTransCoeffS(i,j,bi,bj))
+            ENDIF
            ENDIF
           ENDDO
          ENDDO
@@ -740,7 +761,22 @@ C     given Lplus, recalculate transfer coefficients
      &         SHELFICEheatTransCoeffus)*ustar
 C              PRINT*, 'Lplus =', Lplus
 C              PRINT*, 'buoyancy forcing', Bb
-
+C      Use convective param
+              IF (SHELFICEuseMK18limit) THEN
+                shiTransCoeffTconv(i,j,bi,bj) = c_1*(gravity*(sLoc(I,J)
+     &              -saltFreeze)
+     &              *sBeta*rhoNil*kappa_s**(5. _d -1)
+     &              /shiKinVisc)**(3.333 _d -1)
+     &              * kappa_t**(5. _d -1)* rhoml/rhoShelfIce
+     &              * COS(shiConvTheta*(3.1415 _d 0)/(1.8 _d 2))
+     &              **(shiTwoThirds)
+                shiTransCoeffT(i,j,bi,bj) = MAX(
+     &             shiTransCoeffTconv(i,j,bi,bj), 
+     &             shiTransCoeffT(i,j,bi,bj))
+                shiTransCoeffS(i,j,bi,bj) = MAX(
+     &             shiTransCoeffTconv(i,j,bi,bj)/35,
+     &             shiTransCoeffS(i,j,bi,bj))
+              ENDIF
 C     Now recalculate melt
 C     (insert old quadratic code)
               IF ( K .NE. 0 .AND. pLoc(I,J) .GT. 0. _d 0 ) THEN

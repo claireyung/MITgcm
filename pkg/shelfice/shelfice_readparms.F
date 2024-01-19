@@ -48,6 +48,7 @@ CEOP
      &     SHELFICER22tc,
      &     SHELFICER22td,
      &     shiLinFrEOSa, shiLinFrEOSb, shiLinFrEOSc,
+     &     shiConvTheta,
      &     SHELFICEsaltTransCoeffus,
      &     SHELFICEMassStepping,
      &     rhoShelfice, SHELFICEkappa,
@@ -71,6 +72,7 @@ CEOP
      &     SHELFICEuseGammaFrict, SHELFICE_oldCalcUStar,
      &     SHELFICEuseHJ99, SHELFICEuseJ10,
      &     SHELFICEuseR22, SHELFICEuseTidal,
+     &     SHELFICEuseMK18limit,
      &     shiCdrag, shiZetaN, shiRc,
      &     shiuStarMin, shiuStarTidal,
      &     shiPrandtl, shiSchmidt, shiKinVisc,
@@ -130,6 +132,7 @@ C Set defaults values for parameters in SHELFICE.h
       shiLinFrEOSa             = -0.0575 _d 0
       shiLinFrEOSb             = - 7.61 _d -4
       shiLinFrEOSc             = 0.0901 _d 0
+      shiConvTheta             = 7.5    _d 1
       no_slip_shelfice         = no_slip_bottom
       SHELFICEDragLinear       = bottomDragLinear
       SHELFICEDragQuadratic    = UNSET_RL
@@ -143,6 +146,7 @@ C Set defaults values for parameters in SHELFICE.h
       SHELFICEuseHJ99          = .TRUE.
       SHELFICEuseJ10           = .FALSE.
       SHELFICEuseR22           = .FALSE.
+      SHELFICEuseMK18limit     = .FALSE.
       SHELFICE_oldCalcUStar    = .FALSE.
       SHELFICEremeshFrequency  = 0.
       SHELFICEsplitThreshold   = hFacMin*1.1 _d 0 + 1. _d 0

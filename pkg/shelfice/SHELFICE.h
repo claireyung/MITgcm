@@ -87,6 +87,8 @@ C     SHELFICER22sa            :: For R22, coefficient A (def: -9.29)
 C     SHELFICER22sb            :: For R22, coefficient B (def: 0.122)
 C     SHELFICER22tc            :: For R22, coefficient C (def: -7.58)
 C     SHELFICER22td            :: For R22, coefficient D (def: 0.354)
+C     SHELFICEuseMK18limit     :: Use MK18 convective limit at low ustar
+C     shiConvTheta             :: Angle for MK18 convective limit
 C     -----------------------------------------------------------------------
 C     SHELFICEDragLinear       :: linear drag at bottom shelfice (1/s)
 C     SHELFICEDragQuadratic    :: quadratic drag at bottom shelfice (default
@@ -150,6 +152,7 @@ CEOP
      &     SHELFICER22sa, SHELFICER22sb,
      &     SHELFICER22tc, SHELFICER22td,
      &     shiLinFrEOSa, shiLinFrEOSb, shiLinFrEOSc,
+     &     shiConvTheta,
      &     rhoShelfice, SHELFICEkappa,
      &     SHELFICElatentHeat,
      &     SHELFICEheatCapacity_Cp,
@@ -185,6 +188,7 @@ CEOP
       _RL SHELFICER22tc
       _RL SHELFICER22td
       _RL shiLinFrEOSa,shiLinFrEOSb, shiLinFrEOSc
+      _RL shiConvTheta
 
       COMMON /SHELFICE_FIELDS_RL/
      &     shelficeMass, shelficeMassInit,
@@ -243,6 +247,7 @@ CEOP
       LOGICAL SHELFICEuseHJ99
       LOGICAL SHELFICEuseJ10
       LOGICAL SHELFICEuseR22
+      LOGICAL SHELFICEuseMK18limit
       LOGICAL SHELFICE_oldCalcUStar
       LOGICAL SHELFICEMassStepping
       LOGICAL SHELFICEDynMassOnly
@@ -265,6 +270,7 @@ CEOP
      &     SHELFICEuseHJ99,
      &     SHELFICEuseJ10,
      &     SHELFICEuseR22,
+     &     SHELFICEuseMK18limit,
      &     SHELFICE_oldCalcUStar,
      &     SHELFICEMassStepping,
      &     SHELFICEDynMassOnly
