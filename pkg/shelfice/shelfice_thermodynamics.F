@@ -160,7 +160,7 @@ C     of Holland and Jenkins, JPO, 1999
        shiLo = 0. _d 0
        kappa_t = shiKinVisc/shiPrandtl
        kappa_s = shiKinVisc/shiSchmidt
-       c_1 = 9.7 _d -2
+       c_1 = 8.6 _d -2
        shiPr = shiPrandtl**shiTwoThirds
        shiSc = shiSchmidt**shiTwoThirds
 cph      shiPr = (viscArNr(1)/diffKrNrT(1))**shiTwoThirds
@@ -798,9 +798,9 @@ C      Use convective param
               IF (SHELFICEuseMK18limit) THEN
                 shiTransCoeffTconv(i,j,bi,bj) = c_1*(gravity*(sLoc(I,J)
      &              -saltFreeze)
-     &              *sBeta*rhoNil*kappa_s**(5. _d -1)
+     &              *sBeta*kappa_s**(5. _d -1)
      &              /shiKinVisc)**(3.333 _d -1)
-     &              * kappa_t**(5. _d -1)* rhoml/rhoShelfIce
+     &              * kappa_t**(5. _d -1)!* ! rhoml/rhoShelfIce
      &              * COS(angleLoc(i,j)*(3.1415 _d 0)/(1.8 _d 2))
      &              **(shiTwoThirds)
                 shiTransCoeffT(i,j,bi,bj) = MAX(
@@ -942,14 +942,14 @@ C     get ustar from diag
                 ustar = uStarDiag(I,J,bi,bj)
 
 C                PRINT*,'DOing MK18 step'
-                rhoml = rhoNil*(sBeta*(sLoc(I,J)-(34.4))-
-     &             tAlpha*(tLoc(I,J)+1.9))+(rhoNil)
+C                rhoml = rhoNil*(sBeta*(sLoc(I,J)-(34.4))-
+C     &             tAlpha*(tLoc(I,J)+1.9))+(rhoNil)
 
                 shiTransCoeffTconv(i,j,bi,bj) = c_1*(gravity*(sLoc(I,J)
      &              -saltFreeze)
-     &              *sBeta*rhoNil*kappa_s**(5. _d -1)
+     &              *sBeta*kappa_s**(5. _d -1)
      &              /shiKinVisc)**(3.333 _d -1)
-     &              * kappa_t**(5. _d -1)* rhoml/rhoShelfIce
+     &              * kappa_t**(5. _d -1)!* rhoml/rhoShelfIce
      &              * COS(angleLoc(i,j)*(3.1415 _d 0)/(1.8 _d 2))
      &              **(shiTwoThirds)
                 shiTransCoeffT(i,j,bi,bj) = ustar *
