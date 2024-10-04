@@ -807,7 +807,8 @@ C      Use convective param
      &             shiTransCoeffTconv(i,j,bi,bj), 
      &             shiTransCoeffT(i,j,bi,bj))
                 shiTransCoeffS(i,j,bi,bj) = MAX(
-     &             shiTransCoeffTconv(i,j,bi,bj)/35,
+     &             shiTransCoeffTconv(i,j,bi,bj)*SQRT(kappa_s/kappa_t)
+     &             * (rhoShelfIce/rhoml)*(saltFreeze/sLoc(I,J)),
      &             shiTransCoeffS(i,j,bi,bj))
               ENDIF
 C     Now recalculate melt
@@ -942,8 +943,8 @@ C     get ustar from diag
                 ustar = uStarDiag(I,J,bi,bj)
 
 C                PRINT*,'DOing MK18 step'
-C                rhoml = rhoNil*(sBeta*(sLoc(I,J)-(34.4))-
-C     &             tAlpha*(tLoc(I,J)+1.9))+(rhoNil)
+                rhoml = rhoNil*(sBeta*(sLoc(I,J)-(34.4))-
+     &             tAlpha*(tLoc(I,J)+1.9))+(rhoNil)
 
                 shiTransCoeffTconv(i,j,bi,bj) = c_1*(gravity*(sLoc(I,J)
      &              -saltFreeze)
@@ -962,7 +963,8 @@ C     &           'MK18 coeff is', shiTransCoeffTconv(i,j,bi,bj)
      &             shiTransCoeffTconv(i,j,bi,bj),
      &             shiTransCoeffT(i,j,bi,bj))
                 shiTransCoeffS(i,j,bi,bj) = MAX(
-     &             shiTransCoeffTconv(i,j,bi,bj)/35,
+     &             shiTransCoeffTconv(i,j,bi,bj)*SQRT(kappa_s/kappa_t)
+     &             * (rhoShelfIce/rhoml)*(saltFreeze/sLoc(I,J)),
      &             shiTransCoeffS(i,j,bi,bj))
 C     Now recalculate melt
 C     (insert old quadratic code)
