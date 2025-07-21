@@ -123,10 +123,10 @@ C Set defaults values for parameters in SHELFICE.h
       SHELFICEsaltTransCoeff   = UNSET_RL
       SHELFICEheatTransCoeffus =    1.2 _d -02
       SHELFICEsaltTransCoeffus =    3.9 _d -04
-      SHELFICER22sa            = - 9.29 _d 0
-      SHELFICER22sb            =   1.22 _d -1
-      SHELFICER22tc            = - 7.59 _d 0
-      SHELFICER22td            =   3.54 _d -1
+      SHELFICER22sa            = - 9.8997 _d 0
+      SHELFICER22sb            =   2.226 _d -1
+      SHELFICER22tc            = - 7.39041 _d 0
+      SHELFICER22td            =   3.222 _d -1
       SHELFICEkappa            =   1.54 _d -06
       SHELFICEthetaSurface     = - 20.0 _d 0
       shiLinFrEOSa             = -0.0575 _d 0
